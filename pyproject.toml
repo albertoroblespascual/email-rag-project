@@ -1,0 +1,45 @@
+[project]
+name = "email-rag-project"
+version = "0.1.0"
+description = "Pipeline local para indexar y consultar histórico de correo (PST) con RAG + grafo de conocimiento"
+requires-python = ">=3.11"
+readme = "README.md"
+
+dependencies = [
+    # Parseo de correo
+    "mail-parser>=4.0.1",
+    "beautifulsoup4>=4.12",
+
+    # Extracción de adjuntos
+    "unstructured[pdf,docx,pptx,xlsx]>=0.15",
+    "python-docx>=1.1",
+    "python-pptx>=0.6.23",
+    "openpyxl>=3.1",
+    "pypdf>=4.0",
+
+    # Embeddings + vector DB
+    "ollama>=0.3.0",
+    "qdrant-client>=1.9",
+
+    # RAG / orquestación
+    "llama-index>=0.11",
+    "llama-index-vector-stores-qdrant>=0.3",
+    "llama-index-embeddings-ollama>=0.3",
+    "llama-index-llms-ollama>=0.3",
+
+    # Grafo (fase 2)
+    "neo4j>=5.20",
+
+    # Utilidades
+    "tqdm>=4.66",
+    "python-dateutil>=2.9",
+]
+
+[dependency-groups]
+dev = [
+    "ipython>=8.26",
+    "ruff>=0.6",
+]
+
+[tool.uv]
+package = false

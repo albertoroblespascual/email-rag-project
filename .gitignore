@@ -1,0 +1,17 @@
+# TODA la carpeta data/ queda excluida sin excepción — contiene PST reales,
+# correos, adjuntos y embeddings derivados de contenido confidencial de
+# clientes. Nunca debe entrar en el repo, bajo ningún subdirectorio.
+data/
+
+# Entorno Python
+.venv/
+__pycache__/
+*.pyc
+*.egg-info/
+
+# Logs / temporales
+*.log
+.DS_Store
+
+# Neo4j / Qdrant si se montan volúmenes locales adicionales
+neo4j_data/
