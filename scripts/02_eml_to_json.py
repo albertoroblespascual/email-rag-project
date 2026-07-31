@@ -114,6 +114,27 @@ def extract_attachments(msg: email.message.Message, out_dir: Path, email_id: str
     return saved
 
 
+def extract_address_list(header_value: str) -> list:
+    """Extrae direcciones de un header To/Cc, decodificando encoded-words.
+    Maneja el caso de PST antiguos donde Outlook resolvió el destinatario
+    por nombre de la libreta de direcciones (Exchange/X.500) sin SMTP
+    asociado: el resultado es un bloque MIME codificado con varios nombres
+    separados por ';' en vez de direcciones reales — se decodifica y separa."""
+    if not header_value:
+        return []
+    raw_addrs = [addr for _, addr in getaddresses([header_value]) if addr]
+    results = []
+    for addr in raw_addrs:
+        decoded = decode_mime_header(addr)
+        if not decoded:
+            continue
+        if "@" not in decoded and ";" in decoded:
+            results.extend(p.strip() for p in decoded.split(";") if p.strip())
+        else:
+            results.append(decoded)
+    return results
+
+
 def parse_eml_file(path: Path, attachments_dir: Path, folder_name: str) -> dict:
     raw = path.read_bytes()
     msg = email.message_from_bytes(raw)
@@ -128,8 +149,9 @@ def parse_eml_file(path: Path, attachments_dir: Path, folder_name: str) -> dict:
 
     from_name, from_addr = parseaddr(msg.get("From", ""))
     from_name = decode_mime_header(from_name)
-    to_list = [addr for _, addr in getaddresses([msg.get("To", "")]) if addr]
-    cc_list = [addr for _, addr in getaddresses([msg.get("Cc", "")]) if addr]
+    from_addr = decode_mime_header(from_addr)
+    to_list = extract_address_list(msg.get("To", ""))
+    cc_list = extract_address_list(msg.get("Cc", ""))
 
     thread_id = msg.get("Thread-Index") or msg.get("References") or msg.get("In-Reply-To") or email_id
 
