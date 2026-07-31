@@ -25,6 +25,8 @@ from qdrant_client.models import (
 )
 from tqdm import tqdm
 
+from _jsonl_utils import read_jsonl_lines
+
 BATCH_SIZE = 128
 VECTOR_SIZE = 1024  # dimensión de BGE-M3
 
@@ -63,7 +65,7 @@ def main():
     client = QdrantClient(host=args.host, port=args.port)
     ensure_collection(client, args.collection)
 
-    lines = Path(args.input).read_text(encoding="utf-8").splitlines()
+    lines = read_jsonl_lines(args.input)
     print(f"Indexando {len(lines)} chunks en Qdrant (colección: {args.collection})...")
 
     batch = []

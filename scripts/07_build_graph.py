@@ -19,6 +19,8 @@ import ollama
 from neo4j import GraphDatabase
 from tqdm import tqdm
 
+from _jsonl_utils import read_jsonl_lines
+
 LLM_MODEL = "qwen2.5:72b"
 
 EXTRACTION_PROMPT = """Extrae del siguiente correo, en JSON estricto y nada más
@@ -117,7 +119,7 @@ def main():
     ap.add_argument("--limit", type=int, default=None, help="Limitar nº de correos (para pruebas)")
     args = ap.parse_args()
 
-    lines = Path(args.input).read_text(encoding="utf-8").splitlines()
+    lines = read_jsonl_lines(args.input)
     if args.limit:
         lines = lines[: args.limit]
 

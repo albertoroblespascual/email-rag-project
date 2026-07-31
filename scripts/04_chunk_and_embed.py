@@ -18,6 +18,8 @@ from pathlib import Path
 import ollama
 from tqdm import tqdm
 
+from _jsonl_utils import read_jsonl_lines
+
 CHUNK_SIZE = 800       # caracteres aprox. por chunk (ajustable)
 CHUNK_OVERLAP = 150
 EMBED_MODEL = "bge-m3"
@@ -63,7 +65,7 @@ def main():
     out_path = Path(args.output)
     out_path.parent.mkdir(parents=True, exist_ok=True)
 
-    lines = in_path.read_text(encoding="utf-8").splitlines()
+    lines = read_jsonl_lines(in_path)
     print(f"Chunking + embeddings para {len(lines)} correos (modelo: {EMBED_MODEL})...")
 
     n_chunks = 0
